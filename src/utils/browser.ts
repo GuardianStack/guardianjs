@@ -1,15 +1,39 @@
+/**
+ * @fileoverview Browser and engine detection utilities
+ * 
+ * This module provides functions to detect browser engines and platforms without
+ * relying on User-Agent string parsing. Instead, it uses feature detection by
+ * checking for the presence of specific APIs and properties that are unique to
+ * different browsers.
+ * 
+ * These detection functions are used to:
+ * - Apply browser-specific workarounds
+ * - Skip problematic APIs in certain browsers
+ * - Adjust fingerprinting strategies based on browser capabilities
+ * 
+ * @module utils/browser
+ */
+
 import { countTruthy } from "./data";
 import { isFunctionNative } from "./misc";
 
-/*
- * Functions to help with features that vary through browsers
- */
-
 /**
  * Checks whether the browser is based on Trident (the Internet Explorer engine) without using user-agent.
- *
- * Warning for package users:
- * This function is out of Semantic Versioning, i.e. can change unexpectedly. Usage is at your own risk.
+ * 
+ * Uses feature detection to identify IE 10 and IE 11 by checking for properties
+ * that are present in these browsers but not in others.
+ * 
+ * @returns {boolean} True if the browser is based on Trident (IE 10/11).
+ * 
+ * @example
+ * ```typescript
+ * if (isTrident()) {
+ *   console.log('Running on Internet Explorer');
+ * }
+ * ```
+ * 
+ * @warning This function is out of Semantic Versioning, i.e. can change unexpectedly. Usage is at your own risk.
+ * @public
  */
 export function isTrident(): boolean {
   const w = window;
@@ -29,9 +53,14 @@ export function isTrident(): boolean {
 
 /**
  * Checks whether the browser is based on EdgeHTML (the pre-Chromium Edge engine) without using user-agent.
- *
- * Warning for package users:
- * This function is out of Semantic Versioning, i.e. can change unexpectedly. Usage is at your own risk.
+ * 
+ * Uses feature detection to identify the legacy Microsoft Edge browser (before it
+ * switched to Chromium).
+ * 
+ * @returns {boolean} True if the browser is based on EdgeHTML.
+ * 
+ * @warning This function is out of Semantic Versioning, i.e. can change unexpectedly. Usage is at your own risk.
+ * @public
  */
 export function isEdgeHTML(): boolean {
   // Based on research in October 2020
@@ -50,9 +79,21 @@ export function isEdgeHTML(): boolean {
 
 /**
  * Checks whether the browser is based on Chromium without using user-agent.
- *
- * Warning for package users:
- * This function is out of Semantic Versioning, i.e. can change unexpectedly. Usage is at your own risk.
+ * 
+ * Detects Chromium-based browsers (Chrome, Edge, Brave, Opera, etc.) by checking
+ * for Chromium-specific APIs and properties.
+ * 
+ * @returns {boolean} True if the browser is based on Chromium.
+ * 
+ * @example
+ * ```typescript
+ * if (isChromium()) {
+ *   console.log('Chromium-based browser detected');
+ * }
+ * ```
+ * 
+ * @warning This function is out of Semantic Versioning, i.e. can change unexpectedly. Usage is at your own risk.
+ * @public
  */
 export function isChromium(): boolean {
   // Based on research in October 2020. Tested to detect Chromium 42-86.
@@ -73,11 +114,23 @@ export function isChromium(): boolean {
 }
 
 /**
- * Checks whether the browser is based on mobile or desktop Safari without using user-agent.
+ * Checks whether the browser is based on WebKit (Safari engine) without using user-agent.
  * All iOS browsers use WebKit (the Safari engine).
- *
- * Warning for package users:
- * This function is out of Semantic Versioning, i.e. can change unexpectedly. Usage is at your own risk.
+ * 
+ * Detects WebKit-based browsers by checking for WebKit-specific APIs and properties.
+ * This includes Safari on macOS/iOS and all browsers on iOS (Chrome, Firefox, etc.).
+ * 
+ * @returns {boolean} True if the browser is based on WebKit.
+ * 
+ * @example
+ * ```typescript
+ * if (isWebKit()) {
+ *   console.log('WebKit-based browser detected');
+ * }
+ * ```
+ * 
+ * @warning This function is out of Semantic Versioning, i.e. can change unexpectedly. Usage is at your own risk.
+ * @public
  */
 export function isWebKit(): boolean {
   // Based on research in August 2024
@@ -146,9 +199,21 @@ export function isSafariWebKit(): boolean {
 
 /**
  * Checks whether the browser is based on Gecko (Firefox engine) without using user-agent.
- *
- * Warning for package users:
- * This function is out of Semantic Versioning, i.e. can change unexpectedly. Usage is at your own risk.
+ * 
+ * Detects Firefox and other Gecko-based browsers by checking for Gecko-specific
+ * APIs and properties.
+ * 
+ * @returns {boolean} True if the browser is based on Gecko (Firefox).
+ * 
+ * @example
+ * ```typescript
+ * if (isGecko()) {
+ *   console.log('Firefox detected');
+ * }
+ * ```
+ * 
+ * @warning This function is out of Semantic Versioning, i.e. can change unexpectedly. Usage is at your own risk.
+ * @public
  */
 export function isGecko(): boolean {
   const w = window;
