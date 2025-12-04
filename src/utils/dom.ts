@@ -1,15 +1,39 @@
+/**
+ * @fileoverview DOM manipulation and iframe utilities
+ * 
+ * This module provides utilities for working with the DOM, including creating
+ * temporary iframes for measurements and manipulating elements in a CSP-safe manner.
+ * 
+ * @module utils/dom
+ */
+
 import { MaybePromise, wait } from './async'
 import { parseSimpleCssSelector } from './data'
 
 /**
  * Creates and keeps an invisible iframe while the given function runs.
  * The given function is called when the iframe is loaded and has a body.
- * The iframe allows to measure DOM sizes inside itself.
+ * The iframe allows to measure DOM sizes inside itself without affecting the main page.
  *
- * Notice: passing an initial HTML code doesn't work in IE.
- *
- * Warning for package users:
- * This function is out of Semantic Versioning, i.e. can change unexpectedly. Usage is at your own risk.
+ * The iframe is automatically cleaned up after the function completes.
+ * 
+ * @template T
+ * @param {(iframe: HTMLIFrameElement, iWindow: typeof window) => MaybePromise<T>} action - Function to run with the iframe.
+ * @param {string} [initialHtml] - Optional initial HTML content for the iframe.
+ * @param {number} [domPollInterval=50] - Milliseconds between checks for iframe readiness.
+ * @returns {Promise<T>} The result of the action function.
+ * 
+ * @example
+ * ```typescript
+ * const result = await withIframe((iframe, iWindow) => {
+ *   const el = iWindow.document.createElement('div');
+ *   return el.offsetWidth;
+ * });
+ * ```
+ * 
+ * @notice Passing an initial HTML code doesn't work in IE.
+ * @warning This function is out of Semantic Versioning, i.e. can change unexpectedly. Usage is at your own risk.
+ * @public
  */
 export async function withIframe<T>(
   action: (iframe: HTMLIFrameElement, iWindow: typeof window) => MaybePromise<T>,
@@ -85,8 +109,19 @@ export async function withIframe<T>(
 }
 
 /**
- * Creates a DOM element that matches the given selector.
- * Only single element selector are supported (without operators like space, +, >, etc).
+ * Creates a DOM element that matches the given CSS selector.
+ * Only single element selectors are supported (without operators like space, +, >, etc).
+ * 
+ * @param {string} selector - CSS selector string (e.g., 'div.myclass#myid').
+ * @returns {HTMLElement} The created element.
+ * 
+ * @example
+ * ```typescript
+ * const el = selectorToElement('div.container#main');
+ * // Creates: <div class="container" id="main"></div>
+ * ```
+ * 
+ * @public
  */
 export function selectorToElement(selector: string): HTMLElement {
   const [tag, attributes] = parseSimpleCssSelector(selector)
@@ -105,7 +140,21 @@ export function selectorToElement(selector: string): HTMLElement {
 }
 
 /**
- * Adds CSS styles from a string in such a way that doesn't trigger a CSP warning (unsafe-inline or unsafe-eval)
+ * Adds CSS styles from a string in a CSP-safe manner.
+ * 
+ * This function parses a CSS string and applies styles using setProperty instead of
+ * cssText, avoiding Content Security Policy warnings about unsafe-inline or unsafe-eval.
+ * 
+ * @param {CSSStyleDeclaration} style - The style object to modify.
+ * @param {string} source - CSS string to parse (e.g., 'color: red; font-size: 12px').
+ * 
+ * @example
+ * ```typescript
+ * addStyleString(element.style, 'color: red; font-size: 12px');
+ * ```
+ * 
+ * @see https://github.com/fingerprintjs/fingerprintjs/issues/733
+ * @public
  */
 export function addStyleString(style: CSSStyleDeclaration, source: string): void {
   // We don't use `style.cssText` because browsers must block it when no `unsafe-eval` CSP is presented: https://csplite.com/csp145/#w3c_note
