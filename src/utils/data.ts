@@ -1,9 +1,33 @@
-/*
+/**
+ * @fileoverview Pure data manipulation utilities
+ * 
  * This file contains functions to work with pure data only (no browser features, DOM, side effects, etc).
+ * These utilities provide type-safe alternatives to common array and data operations.
+ * 
+ * @module utils/data
  */
 
 /**
- * Does the same as Array.prototype.includes but has better typing
+ * Does the same as Array.prototype.includes but has better typing.
+ * 
+ * This function provides a type guard that narrows the type of the needle
+ * to the haystack type when the function returns true.
+ * 
+ * @template THaystack
+ * @param {ArrayLike<THaystack>} haystack - The array to search in.
+ * @param {unknown} needle - The value to search for.
+ * @returns {boolean} True if the needle is in the haystack.
+ * 
+ * @example
+ * ```typescript
+ * const arr = ['a', 'b', 'c'] as const;
+ * const value: unknown = 'b';
+ * if (includes(arr, value)) {
+ *   // value is now typed as 'a' | 'b' | 'c'
+ * }
+ * ```
+ * 
+ * @public
  */
 export function includes<THaystack>(
   haystack: ArrayLike<THaystack>,
@@ -18,7 +42,18 @@ export function includes<THaystack>(
 }
 
 /**
- * Like `!includes()` but with proper typing
+ * Like `!includes()` but with proper typing.
+ * 
+ * This function provides a type guard that excludes the haystack type from
+ * the needle type when the function returns true.
+ * 
+ * @template THaystack
+ * @template TNeedle
+ * @param {ArrayLike<THaystack>} haystack - The array to search in.
+ * @param {TNeedle} needle - The value to search for.
+ * @returns {boolean} True if the needle is NOT in the haystack.
+ * 
+ * @public
  */
 export function excludes<THaystack, TNeedle>(
   haystack: ArrayLike<THaystack>,
@@ -28,27 +63,78 @@ export function excludes<THaystack, TNeedle>(
 }
 
 /**
- * Be careful, NaN can return
+ * Converts a value to an integer.
+ * 
+ * @param {unknown} value - The value to convert.
+ * @returns {number} The parsed integer (may be NaN if parsing fails).
+ * 
+ * @warning Be careful, NaN can be returned if the value cannot be parsed.
+ * @public
  */
 export function toInt(value: unknown): number {
   return parseInt(value as string);
 }
 
 /**
- * Be careful, NaN can return
+ * Converts a value to a floating-point number.
+ * 
+ * @param {unknown} value - The value to convert.
+ * @returns {number} The parsed float (may be NaN if parsing fails).
+ * 
+ * @warning Be careful, NaN can be returned if the value cannot be parsed.
+ * @public
  */
 export function toFloat(value: unknown): number {
   return parseFloat(value as string);
 }
 
+/**
+ * Replaces NaN values with a replacement value.
+ * 
+ * @template T
+ * @template U
+ * @param {T} value - The value to check.
+ * @param {U} replacement - The replacement value if the input is NaN.
+ * @returns {T | U} The original value or the replacement.
+ * 
+ * @public
+ */
 export function replaceNaN<T, U>(value: T, replacement: U): T | U {
   return typeof value === "number" && isNaN(value) ? replacement : value;
 }
 
+/**
+ * Counts the number of truthy values in an array.
+ * 
+ * @param {unknown[]} values - Array of values to count.
+ * @returns {number} The number of truthy values.
+ * 
+ * @example
+ * ```typescript
+ * countTruthy([true, false, 1, 0, 'yes', '']); // 3
+ * ```
+ * 
+ * @public
+ */
 export function countTruthy(values: unknown[]): number {
   return values.reduce<number>((sum, value) => sum + (value ? 1 : 0), 0);
 }
 
+/**
+ * Rounds a number to the nearest multiple of a base value.
+ * 
+ * @param {number} value - The number to round.
+ * @param {number} [base=1] - The base to round to.
+ * @returns {number} The rounded number.
+ * 
+ * @example
+ * ```typescript
+ * round(123.456, 10); // 120
+ * round(123.456, 0.01); // 123.46
+ * ```
+ * 
+ * @public
+ */
 export function round(value: number, base = 1): number {
   if (Math.abs(base) >= 1) {
     return Math.round(value / base) * base;
