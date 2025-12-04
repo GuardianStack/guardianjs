@@ -1,0 +1,43 @@
+{
+  "name": "@guardianstack/guardianjs-free",
+  "version": "0.1.0",
+  "private": false,
+  "description": "Open-source, purely client-side browser fingerprinting library that computes a Guardian anchor-based visitor identifier.",
+  "license": "MIT",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "fraud",
+    "fraud detection",
+    "fraud prevention",
+    "browser",
+    "fingerprint",
+    "fingerprinting",
+    "device fingerprint",
+    "visitor id",
+    "guardian"
+  ],
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "npm run clean && tsup src/index.ts --format esm,cjs,iife --global-name GuardianJS --dts --sourcemap --minify --out-dir dist",
+    "build:watch":
+      "npm run clean && tsup src/index.ts --format esm,cjs,iife --global-name GuardianJS --dts --sourcemap --watch --out-dir dist",
+    "lint": "echo \"No linter configured for guardianjs yet\"",
+    "test": "echo \"No tests configured for guardianjs yet\""
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.12",
+    "rimraf": "^6.0.1",
+    "tsup": "^8.2.4",
+    "typescript": "^5.5.4"
+  }
+}
+
+
