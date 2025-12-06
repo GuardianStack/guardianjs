@@ -1,5 +1,11 @@
 ## GuardianJS
 
+[![NPM Version](https://img.shields.io/npm/v/@guardianstack/guardianjs-free?style=flat-square&color=blue)](https://www.npmjs.com/package/@guardianstack/guardianjs-free)
+[![NPM Downloads](https://img.shields.io/npm/dm/@guardianstack/guardianjs-free?style=flat-square)](https://www.npmjs.com/package/@guardianstack/guardianjs-free)
+[![Bundle Size](https://img.shields.io/bundlephobia/minzip/@guardianstack/guardianjs-free?style=flat-square)](https://bundlephobia.com/package/@guardianstack/guardianjs-free)
+[![License](https://img.shields.io/npm/l/@guardianstack/guardianjs-free?style=flat-square)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+
 Open-source, purely client-side browser fingerprinting that computes a stable **anchor-based visitor identifier** without any API keys or backend calls.
 
 ### What is GuardianJS?
